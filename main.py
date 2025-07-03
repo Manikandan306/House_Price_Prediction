@@ -5,8 +5,12 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 
-# Load the dataset
-data = pd.read_csv('house_prices.csv')
+try:
+    # Load the dataset
+    data = pd.read_csv('house_prices.csv')
+except FileNotFoundError:
+    print("Error: 'house_prices.csv' not found. Please ensure the file is in the same directory as this script.")
+    exit(1)
 
 # Basic data exploration
 print("Dataset Info:")
@@ -47,7 +51,21 @@ plt.title('Actual vs Predicted House Prices')
 plt.savefig('price_prediction_plot.png')
 plt.show()
 
+# Get user input with validation
+try:
+    sq = float(input("Enter square footage: "))
+    bd = int(input("Enter number of bedrooms: "))
+    bt = int(input("Enter number of bathrooms: "))
+    
+    # Validate inputs
+    if sq <= 0 or bd < 0 or bt < 0:
+        print("Error: Square footage, bedrooms, and bathrooms must be non-negative, and square footage must be positive.")
+        exit(1)
+except ValueError:
+    print("Error: Please enter valid numbers (square footage as a number, bedrooms and bathrooms as integers).")
+    exit(1)
+
 # Example prediction for a new house
-new_house = np.array([[3000, 4, 4]])  # Example: 2000 sq ft, 3 bedrooms, 2 bathrooms
+new_house = np.array([[sq, bd, bt]])
 predicted_price = model.predict(new_house)
-print(f"\nPredicted price for a house with 3000 sq ft, 4 bedrooms, 4 bathrooms: ${predicted_price[0]:.2f}")
+print(f"\nPredicted price for a house with {sq:.0f} sq ft, {bd} bedrooms, {bt} bathrooms: ${predicted_price[0]:.2f}")
